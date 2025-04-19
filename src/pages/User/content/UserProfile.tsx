@@ -1,6 +1,7 @@
 import { useLocation } from 'react-router-dom'
 import { MemberBadge, Tab, TabPanel, Tabs, TabsList } from 'oa-components'
 import { ProfileTypeList } from 'oa-shared'
+import { useCommonStores } from 'src/common/hooks/useCommonStores'
 import { isPreciousPlastic } from 'src/config/config'
 import { isUserContactable } from 'src/utils/helpers'
 import { Alert, Box, Card, Flex } from 'theme-ui'
@@ -23,10 +24,10 @@ interface IProps {
 }
 
 export const UserProfile = ({ docs, isViewingOwnProfile, user }: IProps) => {
-  const { about, impact, links, profileType, tags } = user
-
+  const { userName, about, impact, links, profileType, tags } = user
+  const { userStore } = useCommonStores().stores
+  const activeUser = userStore.activeUser?.userName
   const useLocationHook = useLocation()
-
   const isMember = profileType === ProfileTypeList.MEMBER
 
   const hasContactOption =
@@ -94,7 +95,7 @@ export const UserProfile = ({ docs, isViewingOwnProfile, user }: IProps) => {
                     {heading}
                   </Tab>
                 )}
-                {hasContactOption && (
+                {hasContactOption && userName !== activeUser && (
                   <Tab data-cy="contact-tab" value="contact">
                     Contact
                   </Tab>
@@ -113,7 +114,7 @@ export const UserProfile = ({ docs, isViewingOwnProfile, user }: IProps) => {
                   <Impact impact={impact} user={user} />
                 </TabPanel>
               )}
-              {hasContactOption && (
+              {hasContactOption && userName !== activeUser && (
                 <TabPanel value="contact">
                   <ProfileContact user={user} />
                 </TabPanel>

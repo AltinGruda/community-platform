@@ -185,6 +185,36 @@ describe('[Profile]', () => {
       cy.visit(`/u/${profile_views.userName}`)
       cy.get('[data-testid=profile-views-stat]').should('not.exist')
     })
+
+    it("[Contact tab not shown on user's own profile]", () => {
+      localStorage.setItem('VITE_NO_MESSAGING', 'false')
+
+      const user = generateNewUserDetails()
+      cy.signUpNewUser(user)
+
+      cy.step('Visit own profile')
+      cy.visit(`/u/${user.username}`)
+
+      cy.step('Contact tab should not be visible')
+      cy.get('[data-cy=contact-tab]').should('not.exist')
+    })
+
+    it('[Contact tab shown when viewing another user]', () => {
+      localStorage.setItem('VITE_NO_MESSAGING', 'false')
+
+      const user1 = generateNewUserDetails()
+      const user2 = generateNewUserDetails()
+
+      cy.signUpNewUser(user1)
+      cy.logout()
+
+      cy.signUpNewUser(user2)
+
+      cy.visit(`/u/${user1.username}`)
+
+      cy.get('[data-cy=contact-tab]').should('exist')
+    })
+
   })
 })
 
